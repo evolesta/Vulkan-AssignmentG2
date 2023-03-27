@@ -17,6 +17,7 @@ namespace va {
 		vaBaseDevice.pickPhysicalDevice();
 		vaBaseDevice.createLogicalDevice();
 		vaSwapChain.createSwapChain();
+		vaSwapChain.createImageViews();
 	}
 
 	void vaMainApp::mainLoop() {

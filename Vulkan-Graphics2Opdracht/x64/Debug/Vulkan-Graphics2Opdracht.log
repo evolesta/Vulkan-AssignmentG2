@@ -1,2 +1,7 @@
-﻿  va_baseDevice.cpp
+﻿  Main.cpp
+  va_baseDevice.cpp
+  va_mainApp.cpp
+  va_swapChain.cpp
+  Generating Code...
+LINK : warning LNK4098: defaultlib 'MSVCRT' conflicts with use of other libs; use /NODEFAULTLIB:library
   Vulkan-Graphics2Opdracht.vcxproj -> C:\repos\Graphics2-Vulkan\Vulkan-Graphics2Opdracht\x64\Debug\Vulkan-Graphics2Opdracht.exe

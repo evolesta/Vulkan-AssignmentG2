@@ -14,6 +14,7 @@ namespace va {
 		vaSwapChain(vaBaseDevice &deviceRef, vaWindow &windowRef);
 
 		void createSwapChain();
+		void createImageViews();
 		void cleanup();
 
 	private:
@@ -25,6 +26,7 @@ namespace va {
 		std::vector<VkImage> _swapChainImages;
 		VkFormat _swapChainImageFormat;
 		VkExtent2D _swapChainExtent;
+		std::vector<VkImageView> _swapChainImageViews;
 
 		// Helper functions
 		VkSurfaceFormatKHR chooseSwapSurfaceFormat(const std::vector<VkSurfaceFormatKHR>& availableFormats);
