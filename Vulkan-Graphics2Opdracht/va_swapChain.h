@@ -22,6 +22,9 @@ namespace va {
 		vaWindow &window;
 
 		VkSwapchainKHR _swapChain;
+		std::vector<VkImage> _swapChainImages;
+		VkFormat _swapChainImageFormat;
+		VkExtent2D _swapChainExtent;
 
 		// Helper functions
 		VkSurfaceFormatKHR chooseSwapSurfaceFormat(const std::vector<VkSurfaceFormatKHR>& availableFormats);

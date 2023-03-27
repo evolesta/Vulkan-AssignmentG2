@@ -53,6 +53,13 @@ namespace va {
 		if (vkCreateSwapchainKHR(device.device(), &createInfo, nullptr, &_swapChain) != VK_SUCCESS) {
 			throw std::runtime_error("Failed to create swap chain");
 		}
+
+		vkGetSwapchainImagesKHR(device.device(), _swapChain, &imageCount, nullptr);
+		_swapChainImages.resize(imageCount);
+		vkGetSwapchainImagesKHR(device.device(), _swapChain, &imageCount, _swapChainImages.data());
+
+		_swapChainImageFormat = surfaceFormat.format;
+		_swapChainExtent = extent;
 	}
 
 	// Helper functions
