@@ -137,12 +137,14 @@
   <ItemGroup>
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="va_baseDevice.cpp" />
+    <ClCompile Include="va_graphicsPipeline.cpp" />
     <ClCompile Include="va_mainApp.cpp" />
     <ClCompile Include="va_swapChain.cpp" />
     <ClCompile Include="va_window.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="va_baseDevice.h" />
+    <ClInclude Include="va_graphicsPipeline.h" />
     <ClInclude Include="va_mainApp.h" />
     <ClInclude Include="va_swapChain.h" />
     <ClInclude Include="va_window.h" />

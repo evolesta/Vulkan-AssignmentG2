@@ -17,6 +17,9 @@ namespace va {
 		void createImageViews();
 		void cleanup();
 
+		// Getters
+		VkFormat swapChainImageFormat() { return _swapChainImageFormat; }
+
 	private:
 		// Variables
 		vaBaseDevice &device;

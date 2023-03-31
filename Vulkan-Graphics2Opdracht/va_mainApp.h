@@ -3,6 +3,7 @@
 #include "va_window.h"
 #include "va_baseDevice.h"
 #include "va_swapChain.h"
+#include "va_graphicsPipeline.h"
 
 #include <vector>
 
@@ -19,6 +20,7 @@ namespace va {
 		vaWindow vaWindow{ WIDTH, HEIGHT, "Vulkan Assignment render" };
 		vaBaseDevice vaBaseDevice{vaWindow};
 		vaSwapChain vaSwapChain{ vaBaseDevice, vaWindow };
+		vaGraphicsPipeline vaGraphicsPipeline{ vaBaseDevice, vaSwapChain };
 
 		void initVulkan();
 		void mainLoop();

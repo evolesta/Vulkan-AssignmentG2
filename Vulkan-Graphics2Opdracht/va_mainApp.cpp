@@ -18,6 +18,8 @@ namespace va {
 		vaBaseDevice.createLogicalDevice();
 		vaSwapChain.createSwapChain();
 		vaSwapChain.createImageViews();
+		vaGraphicsPipeline.createRenderPass();
+		vaGraphicsPipeline.createGraphicsPipeline();
 	}
 
 	void vaMainApp::mainLoop() {
@@ -28,6 +30,7 @@ namespace va {
 	}
 
 	void vaMainApp::cleanup() {
+		vaGraphicsPipeline.cleanup();
 		vaSwapChain.cleanup();
 		vaBaseDevice.cleanup();
 		vaWindow.cleanup();
