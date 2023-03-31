@@ -4,6 +4,8 @@ namespace va {
 	vaBaseDevice::vaBaseDevice(vaWindow& window) : _window{ window } {};
 
 	void vaBaseDevice::cleanup() {
+		vkDestroyCommandPool(_device, _commandPool, nullptr);
+
 		vkDestroyDevice(_device, nullptr);
 
 		if (enableValidationLayers) {
@@ -143,6 +145,31 @@ namespace va {
 	}
 
 	void vaBaseDevice::createSurface() { _window.createWindowSurface(_instance, &_surface); }
+
+	void vaBaseDevice::createCommandPool() {
+		QueueFamilyIndices queueFamilyIndices = findQueueFamilies(_physicalDevice);
+
+		VkCommandPoolCreateInfo poolInfo{};
+		poolInfo.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
+		poolInfo.flags = VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT;
+		poolInfo.queueFamilyIndex = queueFamilyIndices.graphicsFamily.value();
+
+		if(vkCreateCommandPool(_device, &poolInfo, nullptr, &_commandPool) != VK_SUCCESS) {
+			throw std::runtime_error("Failed to create command pool");
+		}
+	}
+
+	void vaBaseDevice::createCommandBuffer() {
+		VkCommandBufferAllocateInfo allocInfo{};
+		allocInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
+		allocInfo.commandPool = _commandPool;
+		allocInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
+		allocInfo.commandBufferCount = 1;
+
+		if (vkAllocateCommandBuffers(_device, &allocInfo, &_commandBuffer) != VK_SUCCESS) {
+			throw std::runtime_error("Failed to create command buffers");
+		}
+	}
 
 	// HELPER FUNCTIONS
 	std::vector<const char*> vaBaseDevice::getRequiredExtensions() {

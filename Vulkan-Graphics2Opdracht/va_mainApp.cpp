@@ -20,7 +20,9 @@ namespace va {
 		vaSwapChain.createImageViews();
 		vaSwapChain.createRenderPass();
 		vaGraphicsPipeline.createGraphicsPipeline();
-		//vaSwapChain.createFramebuffers();
+		vaSwapChain.createFramebuffers();
+		vaBaseDevice.createCommandPool();
+		vaBaseDevice.createCommandBuffer();
 	}
 
 	void vaMainApp::mainLoop() {

@@ -38,6 +38,8 @@ namespace va {
 		void createSurface();
 		void pickPhysicalDevice();
 		void createLogicalDevice();
+		void createCommandPool();
+		void createCommandBuffer();
 		void cleanup();
 
 	private:
@@ -51,6 +53,8 @@ namespace va {
 		VkQueue _graphicsQueue;
 		VkQueue _presentQueue;
 		VkSurfaceKHR _surface;
+		VkCommandPool _commandPool;
+		VkCommandBuffer _commandBuffer;
 		vaWindow &_window;
 
 		// Helper functions instance
