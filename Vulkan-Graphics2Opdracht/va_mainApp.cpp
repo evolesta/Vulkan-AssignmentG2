@@ -18,8 +18,9 @@ namespace va {
 		vaBaseDevice.createLogicalDevice();
 		vaSwapChain.createSwapChain();
 		vaSwapChain.createImageViews();
-		vaGraphicsPipeline.createRenderPass();
+		vaSwapChain.createRenderPass();
 		vaGraphicsPipeline.createGraphicsPipeline();
+		//vaSwapChain.createFramebuffers();
 	}
 
 	void vaMainApp::mainLoop() {

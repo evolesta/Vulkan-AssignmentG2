@@ -15,10 +15,12 @@ namespace va {
 
 		void createSwapChain();
 		void createImageViews();
+		void createRenderPass();
+		void createFramebuffers();
 		void cleanup();
 
 		// Getters
-		VkFormat swapChainImageFormat() { return _swapChainImageFormat; }
+		VkRenderPass renderPass() { return _renderPass; }
 
 	private:
 		// Variables
@@ -29,7 +31,9 @@ namespace va {
 		std::vector<VkImage> _swapChainImages;
 		VkFormat _swapChainImageFormat;
 		VkExtent2D _swapChainExtent;
+		VkRenderPass _renderPass;
 		std::vector<VkImageView> _swapChainImageViews;
+		std::vector<VkFramebuffer> _swapChainFramebuffers;
 
 		// Helper functions
 		VkSurfaceFormatKHR chooseSwapSurfaceFormat(const std::vector<VkSurfaceFormatKHR>& availableFormats);

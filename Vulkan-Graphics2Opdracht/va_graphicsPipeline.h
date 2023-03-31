@@ -14,7 +14,6 @@ namespace va {
 	public:
 		vaGraphicsPipeline(vaBaseDevice &deviceRef, vaSwapChain &swapchainRef);
 
-		void createRenderPass();
 		void createGraphicsPipeline();
 		void cleanup();
 
@@ -22,7 +21,6 @@ namespace va {
 		// Variables
 		vaBaseDevice &device;
 		vaSwapChain &swapchain;
-		VkRenderPass _renderPass;
 		VkPipelineLayout _pipelineLayout;
 		VkPipeline _graphicsPipeline;
 
