@@ -24,6 +24,7 @@ namespace va {
 		vaSwapChain &swapchain;
 		VkRenderPass _renderPass;
 		VkPipelineLayout _pipelineLayout;
+		VkPipeline _graphicsPipeline;
 
 		// Helper functions
 		static std::vector<char> readFile(const std::string& filename);
