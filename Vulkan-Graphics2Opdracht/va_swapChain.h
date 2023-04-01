@@ -26,6 +26,7 @@ namespace va {
 		// Variables
 		vaBaseDevice &device;
 		vaWindow &window;
+		
 
 		VkSwapchainKHR _swapChain;
 		std::vector<VkImage> _swapChainImages;
@@ -39,5 +40,6 @@ namespace va {
 		VkSurfaceFormatKHR chooseSwapSurfaceFormat(const std::vector<VkSurfaceFormatKHR>& availableFormats);
 		VkPresentModeKHR chooseSwapPresentMode(const std::vector<VkPresentModeKHR>& availablePresentModes);
 		VkExtent2D chooseSwapExtent(const VkSurfaceCapabilitiesKHR& capabilities);
+		void recordCommandBuffer(VkCommandBuffer commandBuffer, uint32_t imageIndex);
 	};
 }

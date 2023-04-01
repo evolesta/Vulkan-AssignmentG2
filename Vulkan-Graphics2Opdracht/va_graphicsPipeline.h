@@ -1,6 +1,5 @@
 #pragma once
 
-#include "va_window.h"
 #include "va_baseDevice.h"
 #include "va_swapChain.h"
 
