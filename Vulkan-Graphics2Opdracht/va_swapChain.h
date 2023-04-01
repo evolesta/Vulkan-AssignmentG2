@@ -1,6 +1,5 @@
 #pragma once
 
-#include "va_window.h"
 #include "va_baseDevice.h"
 
 #include <vector>
@@ -8,10 +7,11 @@
 #include <algorithm>
 
 namespace va {
+	class vaGraphicsPipeline;
 
 	class vaSwapChain {
 	public:
-		vaSwapChain(vaBaseDevice &deviceRef, vaWindow &windowRef);
+		vaSwapChain(vaBaseDevice &deviceRef, vaWindow &windowRef, vaGraphicsPipeline &graphicsPipelineRef);
 
 		void createSwapChain();
 		void createImageViews();
@@ -26,7 +26,7 @@ namespace va {
 		// Variables
 		vaBaseDevice &device;
 		vaWindow &window;
-		
+		vaGraphicsPipeline &graphicsPipeline;
 
 		VkSwapchainKHR _swapChain;
 		std::vector<VkImage> _swapChainImages;

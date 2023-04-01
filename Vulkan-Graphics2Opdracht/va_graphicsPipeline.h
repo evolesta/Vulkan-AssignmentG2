@@ -1,13 +1,13 @@
 #pragma once
 
 #include "va_baseDevice.h"
-#include "va_swapChain.h"
 
 #include <iostream>
 #include <vector>
 #include <fstream>
 
 namespace va {
+	class vaSwapChain;
 
 	class vaGraphicsPipeline {
 	public:
@@ -15,6 +15,9 @@ namespace va {
 
 		void createGraphicsPipeline();
 		void cleanup();
+
+		// Getters
+		VkPipeline graphicsPipeline() { return _graphicsPipeline; }
 
 	private:
 		// Variables

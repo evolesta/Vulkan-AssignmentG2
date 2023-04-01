@@ -19,7 +19,7 @@ namespace va {
 	private:
 		vaWindow vaWindow{ WIDTH, HEIGHT, "Vulkan Assignment render" };
 		vaBaseDevice vaBaseDevice{vaWindow};
-		vaSwapChain vaSwapChain{ vaBaseDevice, vaWindow };
+		vaSwapChain vaSwapChain{ vaBaseDevice, vaWindow, vaGraphicsPipeline };
 		vaGraphicsPipeline vaGraphicsPipeline{ vaBaseDevice, vaSwapChain };
 
 		void initVulkan();

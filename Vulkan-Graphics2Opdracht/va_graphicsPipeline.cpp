@@ -1,4 +1,5 @@
 #include "va_graphicsPipeline.h"
+#include "va_swapChain.h"
 
 namespace va {
 
