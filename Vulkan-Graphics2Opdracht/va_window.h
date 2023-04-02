@@ -13,12 +13,18 @@ namespace va {
 	public:
 		vaWindow(int w, int h, std::string title);
 		
+		// Getters
 		bool shouldClose() { return glfwWindowShouldClose(window); }
 		VkExtent2D getExtent();
+		bool getFramebufferResized() { return framebufferResized; }
+		void resetFramebufferResized() { framebufferResized = false; }
 
 		void cleanup();
 
+		// Helper functions
 		void createWindowSurface(VkInstance instance, VkSurfaceKHR* surface);
+		static void framebufferResizeCallback(GLFWwindow* window, int width, int height);
+		void minimization();
 
 	private:
 		void initWindow();
@@ -27,5 +33,6 @@ namespace va {
 		const int height;
 		std::string windowTitle;
 		GLFWwindow *window;
+		bool framebufferResized = false;
 	};
 }

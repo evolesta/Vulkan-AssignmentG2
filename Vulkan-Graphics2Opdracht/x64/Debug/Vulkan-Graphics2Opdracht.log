@@ -1,2 +1,8 @@
-﻿  va_mainApp.cpp
+﻿  Main.cpp
+  va_baseDevice.cpp
+  va_graphicsPipeline.cpp
+  va_mainApp.cpp
+  va_swapChain.cpp
+  va_window.cpp
+  Generating Code...
   Vulkan-Graphics2Opdracht.vcxproj -> C:\repos\Graphics2-Vulkan\Vulkan-Graphics2Opdracht\x64\Debug\Vulkan-Graphics2Opdracht.exe

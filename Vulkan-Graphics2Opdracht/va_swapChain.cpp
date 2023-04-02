@@ -6,16 +6,21 @@ namespace va {
 	vaSwapChain::vaSwapChain(vaBaseDevice& deviceRef, vaWindow& windowRef, vaGraphicsPipeline& graphicsPipelineRef) : device{ deviceRef }, window{ windowRef }, graphicsPipeline{graphicsPipelineRef} {};
 
 	void vaSwapChain::cleanup() {
-		for (auto framebuffer : _swapChainFramebuffers) {
-			vkDestroyFramebuffer(device.device(), framebuffer, nullptr);
+		cleanupSwapChain();
+
+		vkDestroyRenderPass(device.device(), _renderPass, nullptr);
+	}
+
+	void vaSwapChain::cleanupSwapChain() {
+		for (size_t i = 0; i < _swapChainFramebuffers.size(); i++) {
+			vkDestroyFramebuffer(device.device(), _swapChainFramebuffers[i], nullptr);
 		}
 
-		for (auto imageView : _swapChainImageViews) {
-			vkDestroyImageView(device.device(), imageView, nullptr);
+		for (size_t i = 0; i < _swapChainImageViews.size(); i++) {
+			vkDestroyImageView(device.device(), _swapChainImageViews[i], nullptr);
 		}
 
 		vkDestroySwapchainKHR(device.device(), _swapChain, nullptr);
-		vkDestroyRenderPass(device.device(), _renderPass, nullptr);
 	}
 
 	// Main functions
@@ -160,6 +165,18 @@ namespace va {
 				throw std::runtime_error("Failed to create framebuffer");
 			}
 		}
+	}
+
+	void vaSwapChain::recreateSwapChain() {
+		window.minimization();
+
+		vkDeviceWaitIdle(device.device());
+
+		cleanupSwapChain();
+
+		createSwapChain();
+		createImageViews();
+		createFramebuffers();
 	}
 
 	// Helper functions

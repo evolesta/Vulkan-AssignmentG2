@@ -14,6 +14,8 @@ namespace va {
 		vaSwapChain(vaBaseDevice &deviceRef, vaWindow &windowRef, vaGraphicsPipeline &graphicsPipelineRef);
 
 		void createSwapChain();
+		void recreateSwapChain();
+		void cleanupSwapChain();
 		void createImageViews();
 		void createRenderPass();
 		void createFramebuffers();

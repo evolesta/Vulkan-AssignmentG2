@@ -33,7 +33,6 @@ namespace va {
 		VkPhysicalDevice physicalDevice() { return _physicalDevice; }
 		VkSurfaceKHR surface() { return _surface; }
 		SwapChainSupportDetails getSwapChainSupport() { return querySwapChainSupport(_physicalDevice); }
-		VkCommandBuffer commandBuffer() { return _commandBuffer; }
 		QueueFamilyIndices getQueueFamilies() { return findQueueFamilies(_physicalDevice); }
 
 		void createInstance();
@@ -51,6 +50,8 @@ namespace va {
 		const std::vector<const char*> validationLayers = { "VK_LAYER_KHRONOS_validation" };
 		const std::vector<const char*> deviceExtensions = { VK_KHR_SWAPCHAIN_EXTENSION_NAME };
 
+		const int MAX_FRAMES_IN_FLIGHT = 2;
+
 		VkInstance _instance;
 		VkDebugUtilsMessengerEXT _debugMessenger;
 		VkPhysicalDevice _physicalDevice;
@@ -59,10 +60,11 @@ namespace va {
 		VkQueue _presentQueue;
 		VkSurfaceKHR _surface;
 		VkCommandPool _commandPool;
-		VkCommandBuffer _commandBuffer;
-		VkSemaphore _imageAvailableSemaphore;
-		VkSemaphore _renderFinishedSemaphore;
-		VkFence _inFlightFence;
+		std::vector<VkCommandBuffer> _commandBuffers;
+		std::vector<VkSemaphore> _imageAvailableSemaphores;
+		std::vector<VkSemaphore> _renderFinishedSemaphores;
+		std::vector<VkFence> _inFlightFences;
+		uint32_t _currentFrame = 0;
 
 		vaWindow &_window;
 		vaSwapChain &swapChain;
