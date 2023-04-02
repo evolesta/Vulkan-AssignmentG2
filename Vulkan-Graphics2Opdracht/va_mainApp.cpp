@@ -23,13 +23,17 @@ namespace va {
 		vaSwapChain.createFramebuffers();
 		vaBaseDevice.createCommandPool();
 		vaBaseDevice.createCommandBuffer();
+		vaBaseDevice.createSyncObjects();
 	}
 
 	void vaMainApp::mainLoop() {
 		// Main loop to keep the GLFW window open
 		while (!vaWindow.shouldClose()) {
 			glfwPollEvents();
+			vaBaseDevice.drawFrame();
 		}
+
+		vkDeviceWaitIdle(vaBaseDevice.device());
 	}
 
 	void vaMainApp::cleanup() {

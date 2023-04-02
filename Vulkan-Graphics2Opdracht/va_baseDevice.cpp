@@ -1,9 +1,14 @@
 #include "va_baseDevice.h"
+#include "va_swapChain.h"
 
 namespace va {
-	vaBaseDevice::vaBaseDevice(vaWindow& window) : _window{ window } {};
+	vaBaseDevice::vaBaseDevice(vaWindow& window, vaSwapChain& swapChainRef) : _window{ window }, swapChain{swapChainRef} {};
 
 	void vaBaseDevice::cleanup() {
+		vkDestroySemaphore(_device, _renderFinishedSemaphore, nullptr);
+		vkDestroySemaphore(_device, _imageAvailableSemaphore, nullptr);
+		vkDestroyFence(_device, _inFlightFence, nullptr);
+
 		vkDestroyCommandPool(_device, _commandPool, nullptr);
 
 		vkDestroyDevice(_device, nullptr);
@@ -169,6 +174,63 @@ namespace va {
 		if (vkAllocateCommandBuffers(_device, &allocInfo, &_commandBuffer) != VK_SUCCESS) {
 			throw std::runtime_error("Failed to create command buffers");
 		}
+	}
+
+	void vaBaseDevice::createSyncObjects() {
+		VkSemaphoreCreateInfo semaphoreInfo{};
+		semaphoreInfo.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
+
+		VkFenceCreateInfo fenceInfo{};
+		fenceInfo.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
+		fenceInfo.flags = VK_FENCE_CREATE_SIGNALED_BIT;
+
+		if (vkCreateSemaphore(_device, &semaphoreInfo, nullptr, &_imageAvailableSemaphore) != VK_SUCCESS ||
+			vkCreateSemaphore(_device, &semaphoreInfo, nullptr, &_renderFinishedSemaphore) != VK_SUCCESS ||
+			vkCreateFence(_device, &fenceInfo, nullptr, &_inFlightFence) != VK_SUCCESS) {
+			throw std::runtime_error("Failed to create semaphores");
+		}
+	}
+
+	void vaBaseDevice::drawFrame() {
+		vkWaitForFences(_device, 1, &_inFlightFence, VK_TRUE, UINT64_MAX);
+		vkResetFences(_device, 1, &_inFlightFence);
+
+		uint32_t imageIndex;
+		vkAcquireNextImageKHR(_device, swapChain.swapChain(), UINT64_MAX, _imageAvailableSemaphore, VK_NULL_HANDLE, &imageIndex);
+
+		vkResetCommandBuffer(_commandBuffer, 0);
+		swapChain.recordCommandBuffer(_commandBuffer, imageIndex);
+
+		VkSubmitInfo submitInfo{};
+		submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
+
+		VkSemaphore waitSemaphores[] = { _imageAvailableSemaphore };
+		VkPipelineStageFlags waitStages[] = { VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT };
+		submitInfo.waitSemaphoreCount = 1;
+		submitInfo.pWaitSemaphores = waitSemaphores;
+		submitInfo.pWaitDstStageMask = waitStages;
+		submitInfo.commandBufferCount = 1;
+		submitInfo.pCommandBuffers = &_commandBuffer;
+
+		VkSemaphore signalSemaphores[] = { _renderFinishedSemaphore };
+		submitInfo.signalSemaphoreCount = 1;
+		submitInfo.pSignalSemaphores = signalSemaphores;
+
+		if (vkQueueSubmit(_graphicsQueue, 1, &submitInfo, _inFlightFence) != VK_SUCCESS) {
+			throw std::runtime_error("Failed to submit draw command buffer");
+		}
+
+		VkPresentInfoKHR presentInfo{};
+		presentInfo.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
+		presentInfo.waitSemaphoreCount = 1;
+		presentInfo.pWaitSemaphores = signalSemaphores;
+
+		VkSwapchainKHR swapChains[] = { swapChain.swapChain() };
+		presentInfo.swapchainCount = 1;
+		presentInfo.pSwapchains = swapChains;
+		presentInfo.pImageIndices = &imageIndex;
+
+		vkQueuePresentKHR(_presentQueue, &presentInfo);
 	}
 
 	// HELPER FUNCTIONS

@@ -19,8 +19,12 @@ namespace va {
 		void createFramebuffers();
 		void cleanup();
 
+		// Public helper functions
+		void recordCommandBuffer(VkCommandBuffer commandBuffer, uint32_t imageIndex);
+
 		// Getters
 		VkRenderPass renderPass() { return _renderPass; }
+		VkSwapchainKHR swapChain() { return _swapChain; }
 
 	private:
 		// Variables
@@ -40,6 +44,5 @@ namespace va {
 		VkSurfaceFormatKHR chooseSwapSurfaceFormat(const std::vector<VkSurfaceFormatKHR>& availableFormats);
 		VkPresentModeKHR chooseSwapPresentMode(const std::vector<VkPresentModeKHR>& availablePresentModes);
 		VkExtent2D chooseSwapExtent(const VkSurfaceCapabilitiesKHR& capabilities);
-		void recordCommandBuffer(VkCommandBuffer commandBuffer, uint32_t imageIndex);
 	};
 }

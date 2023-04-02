@@ -8,10 +8,12 @@
 #include <set>
 
 namespace va {
+	class vaSwapChain;
+
 	class vaBaseDevice {
 	
 	public:
-		vaBaseDevice(vaWindow &window);
+		vaBaseDevice(vaWindow &window, vaSwapChain &swapChainRef);
 
 		#ifdef NDEBUG
 				const bool enableValidationLayers = false;
@@ -31,6 +33,7 @@ namespace va {
 		VkPhysicalDevice physicalDevice() { return _physicalDevice; }
 		VkSurfaceKHR surface() { return _surface; }
 		SwapChainSupportDetails getSwapChainSupport() { return querySwapChainSupport(_physicalDevice); }
+		VkCommandBuffer commandBuffer() { return _commandBuffer; }
 		QueueFamilyIndices getQueueFamilies() { return findQueueFamilies(_physicalDevice); }
 
 		void createInstance();
@@ -40,6 +43,8 @@ namespace va {
 		void createLogicalDevice();
 		void createCommandPool();
 		void createCommandBuffer();
+		void createSyncObjects();
+		void drawFrame();
 		void cleanup();
 
 	private:
@@ -55,7 +60,12 @@ namespace va {
 		VkSurfaceKHR _surface;
 		VkCommandPool _commandPool;
 		VkCommandBuffer _commandBuffer;
+		VkSemaphore _imageAvailableSemaphore;
+		VkSemaphore _renderFinishedSemaphore;
+		VkFence _inFlightFence;
+
 		vaWindow &_window;
+		vaSwapChain &swapChain;
 
 		// Helper functions instance
 		std::vector<const char*> getRequiredExtensions();
