@@ -6,6 +6,9 @@ namespace va {
 	vaGraphicsPipeline::vaGraphicsPipeline(vaBaseDevice& deviceRef, vaSwapChain& swapchainRef) : device{ deviceRef }, swapchain{ swapchainRef } {};
 
 	void vaGraphicsPipeline::cleanup() {
+		vkDestroyBuffer(device.device(), _indexBuffer, nullptr);
+		vkFreeMemory(device.device(), _indexBufferMemory, nullptr);
+
 		vkDestroyBuffer(device.device(), _vertexBuffer, nullptr);
 		vkFreeMemory(device.device(), _vertexBufferMemory, nullptr);
 
@@ -138,6 +141,26 @@ namespace va {
 		createBuffer(bufferSize, VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_VERTEX_BUFFER_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, _vertexBuffer, _vertexBufferMemory);
 
 		device.copyBuffer(stagingBuffer, _vertexBuffer, bufferSize);
+
+		vkDestroyBuffer(device.device(), stagingBuffer, nullptr);
+		vkFreeMemory(device.device(), stagingBufferMemory, nullptr);
+	}
+
+	void vaGraphicsPipeline::createIndexBuffer() {
+		VkDeviceSize bufferSize = sizeof(indices[0]) * indices.size();
+
+		VkBuffer stagingBuffer;
+		VkDeviceMemory stagingBufferMemory;
+		createBuffer(bufferSize, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, stagingBuffer, stagingBufferMemory);
+
+		void* data;
+		vkMapMemory(device.device(), stagingBufferMemory, 0, bufferSize, 0, &data);
+		memcpy(data, indices.data(), (size_t)bufferSize);
+		vkUnmapMemory(device.device(), stagingBufferMemory);
+
+		createBuffer(bufferSize, VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_INDEX_BUFFER_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, _indexBuffer, _indexBufferMemory);
+
+		device.copyBuffer(stagingBuffer, _indexBuffer, bufferSize);
 
 		vkDestroyBuffer(device.device(), stagingBuffer, nullptr);
 		vkFreeMemory(device.device(), stagingBufferMemory, nullptr);

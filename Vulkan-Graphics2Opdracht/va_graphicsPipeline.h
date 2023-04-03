@@ -17,12 +17,15 @@ namespace va {
 
 		void createGraphicsPipeline();
 		void createVertexBuffer();
+		void createIndexBuffer();
 		void cleanup();
 
 		// Getters
 		VkPipeline graphicsPipeline() { return _graphicsPipeline; }
 		VkBuffer vertexBuffer() { return _vertexBuffer; }
+		VkBuffer indexBuffer() { return _indexBuffer; }
 		uint32_t verticesSize() { return vertices.size(); }
+		uint32_t indicesSize() { return indices.size(); }
 
 	private:
 		// Variables
@@ -32,6 +35,8 @@ namespace va {
 		VkPipeline _graphicsPipeline;
 		VkBuffer _vertexBuffer;
 		VkDeviceMemory _vertexBufferMemory;
+		VkBuffer _indexBuffer;
+		VkDeviceMemory _indexBufferMemory;
 
 		// Vertex input
 		struct Vertex {
@@ -63,9 +68,13 @@ namespace va {
 			}
 		};
 		const std::vector<Vertex> vertices = {
-			{{0.0f, -0.5f}, {1.0f, 1.0f, 1.0f}},
-			{{0.5f, 0.5f}, {0.0f, 1.0f, 0.0f}},
-			{{-0.5f, 0.5f}, {0.0f, 0.0f, 1.0f}}
+			{{-0.5f, -0.5f}, {1.0f, 0.0f, 0.0f}},
+			{{0.5f, -0.5f}, {0.0f, 1.0f, 0.0f}},
+			{{0.5f, 0.5f}, {0.0f, 0.0f, 1.0f}},
+			{{-0.5f, 0.5f}, {1.0f, 1.0f, 1.0f}}
+		};
+		const std::vector<uint16_t> indices = {
+			0, 1, 2, 2, 3,  0
 		};
 
 		// Helper functions
