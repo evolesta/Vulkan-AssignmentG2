@@ -248,7 +248,11 @@ namespace va {
 		scissor.extent = _swapChainExtent;
 		vkCmdSetScissor(commandBuffer, 0, 1, &scissor);
 
-		vkCmdDraw(commandBuffer, 3, 1, 0, 0);
+		VkBuffer vertexBuffers[] = { graphicsPipeline.vertexBuffer() };
+		VkDeviceSize offsets[] = { 0 };
+		vkCmdBindVertexBuffers(commandBuffer, 0, 1, vertexBuffers, offsets);
+
+		vkCmdDraw(commandBuffer, static_cast<uint32_t>(graphicsPipeline.verticesSize()), 1, 0, 0);
 
 		vkCmdEndRenderPass(commandBuffer);
 

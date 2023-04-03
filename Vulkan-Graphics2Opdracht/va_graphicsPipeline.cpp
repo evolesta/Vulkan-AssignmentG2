@@ -6,6 +6,9 @@ namespace va {
 	vaGraphicsPipeline::vaGraphicsPipeline(vaBaseDevice& deviceRef, vaSwapChain& swapchainRef) : device{ deviceRef }, swapchain{ swapchainRef } {};
 
 	void vaGraphicsPipeline::cleanup() {
+		vkDestroyBuffer(device.device(), _vertexBuffer, nullptr);
+		vkFreeMemory(device.device(), _vertexBufferMemory, nullptr);
+
 		vkDestroyPipeline(device.device(), _graphicsPipeline, nullptr);
 		vkDestroyPipelineLayout(device.device(), _pipelineLayout, nullptr);
 	}
@@ -34,8 +37,14 @@ namespace va {
 
 		VkPipelineVertexInputStateCreateInfo vertexInputInfo{};
 		vertexInputInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
-		vertexInputInfo.vertexBindingDescriptionCount = 0;
-		vertexInputInfo.vertexAttributeDescriptionCount = 0;
+
+		auto bindingDescription = Vertex::getBindingDescription();
+		auto attributeDescriptions = Vertex::getAttributeDescriptions();
+
+		vertexInputInfo.vertexBindingDescriptionCount = 1;
+		vertexInputInfo.vertexAttributeDescriptionCount = static_cast<uint32_t>(attributeDescriptions.size());
+		vertexInputInfo.pVertexBindingDescriptions = &bindingDescription;
+		vertexInputInfo.pVertexAttributeDescriptions = attributeDescriptions.data();
 
 		VkPipelineInputAssemblyStateCreateInfo inputAssembly{};
 		inputAssembly.sType = VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO;
@@ -114,6 +123,37 @@ namespace va {
 		vkDestroyShaderModule(device.device(), vertShaderModule, nullptr);
 	}
 
+	void vaGraphicsPipeline::createVertexBuffer() {
+		VkBufferCreateInfo bufferInfo{};
+		bufferInfo.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
+		bufferInfo.size = sizeof(vertices[0]) * vertices.size();
+		bufferInfo.usage = VK_BUFFER_USAGE_VERTEX_BUFFER_BIT;
+		bufferInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
+
+		if (vkCreateBuffer(device.device(), &bufferInfo, nullptr, &_vertexBuffer) != VK_SUCCESS) {
+			throw std::runtime_error("Failed to create vertex buffer");
+		}
+
+		VkMemoryRequirements memRequirements;
+		vkGetBufferMemoryRequirements(device.device(), _vertexBuffer, &memRequirements);
+
+		VkMemoryAllocateInfo allocInfo{};
+		allocInfo.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
+		allocInfo.allocationSize = memRequirements.size;
+		allocInfo.memoryTypeIndex = findMemoryType(memRequirements.memoryTypeBits, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
+
+		if (vkAllocateMemory(device.device(), &allocInfo, nullptr, &_vertexBufferMemory) != VK_SUCCESS) {
+			throw std::runtime_error("Failed to allocate vertex buffer memory");
+		}
+
+		vkBindBufferMemory(device.device(), _vertexBuffer, _vertexBufferMemory, 0);
+
+		void* data;
+		vkMapMemory(device.device(), _vertexBufferMemory, 0, bufferInfo.size, 0, &data);
+		memcpy(data, vertices.data(), (size_t) bufferInfo.size);
+		vkUnmapMemory(device.device(), _vertexBufferMemory);
+	}
+
 	// Helper functions
 	std::vector<char> vaGraphicsPipeline::readFile(const std::string& filename) {
 		std::ifstream file(filename, std::ios::ate | std::ios::binary);
@@ -145,5 +185,18 @@ namespace va {
 		}
 
 		return shaderModule;
+	}
+
+	uint32_t vaGraphicsPipeline::findMemoryType(uint32_t typeFilter, VkMemoryPropertyFlags properties) {
+		VkPhysicalDeviceMemoryProperties memProperties; 
+		vkGetPhysicalDeviceMemoryProperties(device.physicalDevice(), &memProperties);
+
+		for (uint32_t i = 0; i < memProperties.memoryTypeCount; i++) {
+			if ((typeFilter & (1 << i)) && (memProperties.memoryTypes[i].propertyFlags & properties) == properties) {
+				return i;
+			}
+		}
+
+		throw std::runtime_error("Failed to find suitable memory type");
 	}
 } 
