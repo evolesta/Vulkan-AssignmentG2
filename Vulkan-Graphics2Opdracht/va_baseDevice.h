@@ -34,6 +34,7 @@ namespace va {
 		VkSurfaceKHR surface() { return _surface; }
 		SwapChainSupportDetails getSwapChainSupport() { return querySwapChainSupport(_physicalDevice); }
 		QueueFamilyIndices getQueueFamilies() { return findQueueFamilies(_physicalDevice); }
+		VkCommandPool commandPool() { return _commandPool; }
 
 		void createInstance();
 		void setupDebugMessenger();
@@ -45,6 +46,9 @@ namespace va {
 		void createSyncObjects();
 		void drawFrame();
 		void cleanup();
+
+		// Helper functions
+		void copyBuffer(VkBuffer srcBuffer, VkBuffer dstBuffer, VkDeviceSize size);
 
 	private:
 		const std::vector<const char*> validationLayers = { "VK_LAYER_KHRONOS_validation" };
