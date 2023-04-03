@@ -19,11 +19,15 @@ namespace va {
 		vaSwapChain.createSwapChain();
 		vaSwapChain.createImageViews();
 		vaSwapChain.createRenderPass();
+		vaGraphicsPipeline.createDescriptorSetLayout();
 		vaGraphicsPipeline.createGraphicsPipeline();
 		vaSwapChain.createFramebuffers();
 		vaBaseDevice.createCommandPool();
 		vaGraphicsPipeline.createVertexBuffer();
 		vaGraphicsPipeline.createIndexBuffer();
+		vaGraphicsPipeline.createUniformBuffers();
+		vaGraphicsPipeline.createDescriptorPool();
+		vaGraphicsPipeline.createDescriptorSets();
 		vaBaseDevice.createCommandBuffer();
 		vaBaseDevice.createSyncObjects();
 	}

@@ -27,6 +27,7 @@ namespace va {
 		// Getters
 		VkRenderPass renderPass() { return _renderPass; }
 		VkSwapchainKHR swapChain() { return _swapChain; }
+		VkExtent2D swapchainExtent() { return _swapChainExtent; }
 
 	private:
 		// Variables

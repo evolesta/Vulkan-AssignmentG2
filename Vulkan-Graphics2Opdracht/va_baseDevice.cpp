@@ -1,11 +1,12 @@
 #include "va_baseDevice.h"
 #include "va_swapChain.h"
+#include "va_graphicsPipeline.h"
 
 namespace va {
-	vaBaseDevice::vaBaseDevice(vaWindow& window, vaSwapChain& swapChainRef) : _window{ window }, swapChain{swapChainRef} {};
+	vaBaseDevice::vaBaseDevice(vaWindow& window, vaSwapChain& swapChainRef, vaGraphicsPipeline& graphicsPipelineRef) : _window{ window }, swapChain{ swapChainRef }, graphicsPipeline{ graphicsPipelineRef } {};
 
 	void vaBaseDevice::cleanup() {
-		for (size_t i = 0; i < MAX_FRAMES_IN_FLIGHT; i++) {
+		for (size_t i = 0; i < _MAX_FRAMES_IN_FLIGHT; i++) {
 			vkDestroySemaphore(_device, _renderFinishedSemaphores[i], nullptr);
 			vkDestroySemaphore(_device, _imageAvailableSemaphores[i], nullptr);
 			vkDestroyFence(_device, _inFlightFences[i], nullptr);
@@ -167,7 +168,7 @@ namespace va {
 	}
 
 	void vaBaseDevice::createCommandBuffer() {
-		_commandBuffers.resize(MAX_FRAMES_IN_FLIGHT);
+		_commandBuffers.resize(_MAX_FRAMES_IN_FLIGHT);
 
 		VkCommandBufferAllocateInfo allocInfo{};
 		allocInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
@@ -181,9 +182,9 @@ namespace va {
 	}
 
 	void vaBaseDevice::createSyncObjects() {
-		_imageAvailableSemaphores.resize(MAX_FRAMES_IN_FLIGHT);
-		_renderFinishedSemaphores.resize(MAX_FRAMES_IN_FLIGHT);
-		_inFlightFences.resize(MAX_FRAMES_IN_FLIGHT);
+		_imageAvailableSemaphores.resize(_MAX_FRAMES_IN_FLIGHT);
+		_renderFinishedSemaphores.resize(_MAX_FRAMES_IN_FLIGHT);
+		_inFlightFences.resize(_MAX_FRAMES_IN_FLIGHT);
 
 		VkSemaphoreCreateInfo semaphoreInfo{};
 		semaphoreInfo.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
@@ -192,7 +193,7 @@ namespace va {
 		fenceInfo.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
 		fenceInfo.flags = VK_FENCE_CREATE_SIGNALED_BIT;
 
-		for (size_t i = 0; i < MAX_FRAMES_IN_FLIGHT; i++) {
+		for (size_t i = 0; i < _MAX_FRAMES_IN_FLIGHT; i++) {
 			if (vkCreateSemaphore(_device, &semaphoreInfo, nullptr, &_imageAvailableSemaphores[i]) != VK_SUCCESS ||
 				vkCreateSemaphore(_device, &semaphoreInfo, nullptr, &_renderFinishedSemaphores[i]) != VK_SUCCESS ||
 				vkCreateFence(_device, &fenceInfo, nullptr, &_inFlightFences[i]) != VK_SUCCESS) {
@@ -214,6 +215,8 @@ namespace va {
 		else if (result != VK_SUCCESS && result != VK_SUBOPTIMAL_KHR) {
 			throw std::runtime_error("Failed to acquire swap chain image");
 		}
+
+		graphicsPipeline.updateUniformBuffer(_currentFrame);
 		
 		vkResetFences(_device, 1, &_inFlightFences[_currentFrame]);
 
@@ -259,7 +262,7 @@ namespace va {
 			throw std::runtime_error("Failed to present swap chain image");
 		}
 
-		_currentFrame = (_currentFrame + 1) % MAX_FRAMES_IN_FLIGHT;
+		_currentFrame = (_currentFrame + 1) % _MAX_FRAMES_IN_FLIGHT;
 	}
 
 	// HELPER FUNCTIONS

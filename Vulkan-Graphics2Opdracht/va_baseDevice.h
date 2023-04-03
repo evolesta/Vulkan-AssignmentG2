@@ -9,11 +9,12 @@
 
 namespace va {
 	class vaSwapChain;
+	class vaGraphicsPipeline;
 
 	class vaBaseDevice {
 	
 	public:
-		vaBaseDevice(vaWindow &window, vaSwapChain &swapChainRef);
+		vaBaseDevice(vaWindow &window, vaSwapChain &swapChainRef, vaGraphicsPipeline &graphicsPipelineRef);
 
 		#ifdef NDEBUG
 				const bool enableValidationLayers = false;
@@ -35,6 +36,8 @@ namespace va {
 		SwapChainSupportDetails getSwapChainSupport() { return querySwapChainSupport(_physicalDevice); }
 		QueueFamilyIndices getQueueFamilies() { return findQueueFamilies(_physicalDevice); }
 		VkCommandPool commandPool() { return _commandPool; }
+		int MAX_FRAMES_IN_FLIGHT() { return _MAX_FRAMES_IN_FLIGHT; }
+		uint32_t currentFrame() { return _currentFrame; }
 
 		void createInstance();
 		void setupDebugMessenger();
@@ -54,7 +57,7 @@ namespace va {
 		const std::vector<const char*> validationLayers = { "VK_LAYER_KHRONOS_validation" };
 		const std::vector<const char*> deviceExtensions = { VK_KHR_SWAPCHAIN_EXTENSION_NAME };
 
-		const int MAX_FRAMES_IN_FLIGHT = 2;
+		const int _MAX_FRAMES_IN_FLIGHT = 2;
 
 		VkInstance _instance;
 		VkDebugUtilsMessengerEXT _debugMessenger;
@@ -72,6 +75,7 @@ namespace va {
 
 		vaWindow &_window;
 		vaSwapChain &swapChain;
+		vaGraphicsPipeline &graphicsPipeline;
 
 		// Helper functions instance
 		std::vector<const char*> getRequiredExtensions();

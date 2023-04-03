@@ -254,6 +254,7 @@ namespace va {
 
 		vkCmdBindIndexBuffer(commandBuffer, graphicsPipeline.indexBuffer(), 0, VK_INDEX_TYPE_UINT16);
 
+		vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, graphicsPipeline.pipelineLayout(), 0, 1, &graphicsPipeline.descriptorSet(device.currentFrame()), 0, nullptr);
 		vkCmdDrawIndexed(commandBuffer, static_cast<uint32_t>(graphicsPipeline.indicesSize()), 1, 0, 0, 0);
 
 		vkCmdEndRenderPass(commandBuffer);
