@@ -1,10 +1,14 @@
 #pragma once
 
+#include "va_baseDevice.h"
+
 #define GLM_FORCE_RADIANS
 #define GLM_FORCE_DEFAULT_ALIGNED_GENTYPES
-#include "va_baseDevice.h"
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
+
+#define STB_IMAGE_IMPLEMENTATION
+#include <stb_image.h>
 
 #include <iostream>
 #include <vector>
@@ -26,6 +30,7 @@ namespace va {
 		void createDescriptorSetLayout();
 		void createDescriptorPool();
 		void createDescriptorSets();
+		void createTextureImage();
 		void cleanup();
 
 		// Getters
@@ -53,6 +58,8 @@ namespace va {
 		VkDeviceMemory _indexBufferMemory;
 		VkDescriptorPool _descriptorPool;
 		std::vector<VkDescriptorSet> _descriptorSets;
+		VkImage _textureImage;
+		VkDeviceMemory _textureImageMemory;
 
 		std::vector<VkBuffer> _uniformBuffers;
 		std::vector<VkDeviceMemory> _uniformBuffersMemory;
@@ -107,5 +114,6 @@ namespace va {
 		VkShaderModule createShaderModule(const std::vector<char>& code);
 		uint32_t findMemoryType(uint32_t typeFilter, VkMemoryPropertyFlags properties);
 		void createBuffer(VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties, VkBuffer& buffer, VkDeviceMemory& bufferMemory);
+		void createImage(uint32_t width, uint32_t height, VkFormat format, VkImageTiling tiling, VkImageUsageFlags usage, VkMemoryPropertyFlags properties, VkImage& image, VkDeviceMemory& imageMemory);
 	};
 }

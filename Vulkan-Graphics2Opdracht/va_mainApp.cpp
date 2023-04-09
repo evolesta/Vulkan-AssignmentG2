@@ -23,6 +23,7 @@ namespace va {
 		vaGraphicsPipeline.createGraphicsPipeline();
 		vaSwapChain.createFramebuffers();
 		vaBaseDevice.createCommandPool();
+		vaGraphicsPipeline.createTextureImage();
 		vaGraphicsPipeline.createVertexBuffer();
 		vaGraphicsPipeline.createIndexBuffer();
 		vaGraphicsPipeline.createUniformBuffers();
