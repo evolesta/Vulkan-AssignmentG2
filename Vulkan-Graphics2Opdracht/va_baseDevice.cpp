@@ -124,6 +124,7 @@ namespace va {
 		}
 
 		VkPhysicalDeviceFeatures deviceFeatures{};
+		deviceFeatures.samplerAnisotropy = VK_TRUE;
 
 		VkDeviceCreateInfo createInfo{};
 		createInfo.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
@@ -342,6 +343,9 @@ namespace va {
 			SwapChainSupportDetails swapChainSupport = querySwapChainSupport(device);
 			swapChainAdequate = !swapChainSupport.formats.empty() && !swapChainSupport.presentModes.empty();
 		}
+
+		VkPhysicalDeviceFeatures supportedFeatures;
+		//vkGetPhysicalDeviceFeatures(_physicalDevice, &supportedFeatures);
 
 		return indices.isComplete() && extensionSupported && swapChainAdequate;
 	}
