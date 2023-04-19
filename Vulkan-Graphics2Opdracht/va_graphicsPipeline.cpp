@@ -8,6 +8,10 @@ namespace va {
 	vaGraphicsPipeline::vaGraphicsPipeline(vaBaseDevice& deviceRef, vaSwapChain& swapchainRef) : device{ deviceRef }, swapchain{ swapchainRef } {};
 
 	void vaGraphicsPipeline::cleanup() {
+		vkDestroyImageView(device.device(), _depthImageView, nullptr);
+		vkDestroyImage(device.device(), _depthImage, nullptr);
+		vkFreeMemory(device.device(), _depthImageMemory, nullptr);
+
 		vkDestroySampler(device.device(), _textureSampler, nullptr);
 		vkDestroyImageView(device.device(), _textureImageView, nullptr);
 
@@ -90,6 +94,14 @@ namespace va {
 		multisampling.sampleShadingEnable = VK_FALSE;
 		multisampling.rasterizationSamples = VK_SAMPLE_COUNT_1_BIT;
 
+		VkPipelineDepthStencilStateCreateInfo depthStencil{};
+		depthStencil.sType = VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO;
+		depthStencil.depthTestEnable = VK_TRUE;
+		depthStencil.depthWriteEnable = VK_TRUE;
+		depthStencil.depthCompareOp = VK_COMPARE_OP_LESS;
+		depthStencil.depthBoundsTestEnable = VK_FALSE;
+		depthStencil.stencilTestEnable = VK_FALSE;
+
 		VkPipelineColorBlendAttachmentState colorBlendAttachment{};
 		colorBlendAttachment.colorWriteMask = VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT | VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT;
 		colorBlendAttachment.blendEnable = VK_FALSE;
@@ -129,6 +141,7 @@ namespace va {
 		pipelineInfo.pMultisampleState = &multisampling;
 		pipelineInfo.pColorBlendState = &colorBlending;
 		pipelineInfo.pDynamicState = &dynamicState;
+		pipelineInfo.pDepthStencilState = &depthStencil;
 		pipelineInfo.layout = _pipelineLayout;
 		pipelineInfo.renderPass = swapchain.renderPass();
 		pipelineInfo.subpass = 0;
@@ -317,7 +330,7 @@ namespace va {
 	}
 
 	void vaGraphicsPipeline::createTextureImageView() {
-		_textureImageView = createImageView(_textureImage, VK_FORMAT_R8G8B8A8_SRGB);
+		_textureImageView = createImageView(_textureImage, VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_ASPECT_COLOR_BIT);
 	}
 
 	void vaGraphicsPipeline::createTextureSampler() {
@@ -345,6 +358,15 @@ namespace va {
 		if (vkCreateSampler(device.device(), &samplerInfo, nullptr, &_textureSampler) != VK_SUCCESS) {
 			throw std::runtime_error("Failed to create texture sampler");
 		}
+	}
+
+	void vaGraphicsPipeline::createDepthResources() {
+		VkFormat depthFormat = findDepthFormat();
+
+		createImage(swapchain.swapchainExtent().width, swapchain.swapchainExtent().height, depthFormat,
+			VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT,
+			VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, _depthImage, _depthImageMemory);
+		_depthImageView = createImageView(_depthImage, depthFormat, VK_IMAGE_ASPECT_DEPTH_BIT);
 	}
 
 	// Helper functions
@@ -469,13 +491,13 @@ namespace va {
 		vkBindImageMemory(device.device(), image, imageMemory, 0);
 	}
 
-	VkImageView vaGraphicsPipeline::createImageView(VkImage image, VkFormat format) {
+	VkImageView vaGraphicsPipeline::createImageView(VkImage image, VkFormat format, VkImageAspectFlags aspectFlags) {
 		VkImageViewCreateInfo viewInfo{};
 		viewInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
 		viewInfo.image = image;
 		viewInfo.viewType = VK_IMAGE_VIEW_TYPE_2D;
 		viewInfo.format = format;
-		viewInfo.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+		viewInfo.subresourceRange.aspectMask = aspectFlags;
 		viewInfo.subresourceRange.baseMipLevel = 0;
 		viewInfo.subresourceRange.levelCount = 1;
 		viewInfo.subresourceRange.baseArrayLayer = 0;
@@ -487,5 +509,30 @@ namespace va {
 		}
 
 		return imageView;
+	}
+
+	VkFormat vaGraphicsPipeline::findSupportedFormat(const std::vector<VkFormat>& candidates, VkImageTiling tiling, VkFormatFeatureFlags features) {
+		for (VkFormat format : candidates) {
+			VkFormatProperties props;
+			vkGetPhysicalDeviceFormatProperties(device.physicalDevice(), format, &props);
+
+			if (tiling == VK_IMAGE_TILING_LINEAR && (props.linearTilingFeatures & features) == features) {
+				return format;
+			}
+			else if (tiling == VK_IMAGE_TILING_OPTIMAL && (props.optimalTilingFeatures & features) == features) {
+				return format;
+			}
+		}
+
+		throw std::runtime_error("Failed to find supported format");
+	}
+
+	VkFormat vaGraphicsPipeline::findDepthFormat() {
+		return findSupportedFormat({ VK_FORMAT_D32_SFLOAT, VK_FORMAT_D32_SFLOAT_S8_UINT, VK_FORMAT_D24_UNORM_S8_UINT },
+			VK_IMAGE_TILING_OPTIMAL, VK_FORMAT_FEATURE_DEPTH_STENCIL_ATTACHMENT_BIT);
+	}
+
+	bool vaGraphicsPipeline::hasStencilComponent(VkFormat format) {
+		return format == VK_FORMAT_D32_SFLOAT_S8_UINT || format == VK_FORMAT_D24_UNORM_S8_UINT;
 	}
 } 

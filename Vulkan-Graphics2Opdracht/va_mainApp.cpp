@@ -21,8 +21,9 @@ namespace va {
 		vaSwapChain.createRenderPass();
 		vaGraphicsPipeline.createDescriptorSetLayout();
 		vaGraphicsPipeline.createGraphicsPipeline();
-		vaSwapChain.createFramebuffers();
 		vaBaseDevice.createCommandPool();
+		vaGraphicsPipeline.createDepthResources();
+		vaSwapChain.createFramebuffers();
 		vaGraphicsPipeline.createTextureImage();
 		vaGraphicsPipeline.createTextureImageView();
 		vaGraphicsPipeline.createTextureSampler();
