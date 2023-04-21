@@ -330,7 +330,7 @@ namespace va {
 		vkDestroyBuffer(device.device(), stagingBuffer, nullptr);
 		vkFreeMemory(device.device(), stagingBufferMemory, nullptr);
 
-		generateMipmaps(_textureImage, texWidth, texHeight, _mipLevels);
+		generateMipmaps(_textureImage, VK_FORMAT_R8G8B8A8_SRGB, texWidth, texHeight, _mipLevels);
 	}
 
 	void vaGraphicsPipeline::createTextureImageView() {
@@ -355,9 +355,9 @@ namespace va {
 		samplerInfo.compareEnable = VK_TRUE;
 		samplerInfo.compareOp = VK_COMPARE_OP_ALWAYS;
 		samplerInfo.mipmapMode = VK_SAMPLER_MIPMAP_MODE_LINEAR;
-		samplerInfo.mipLodBias = 0.0f;
 		samplerInfo.minLod = 0.0f;
-		samplerInfo.maxLod = 0.0f;
+		samplerInfo.maxLod = static_cast<float>(_mipLevels);
+		samplerInfo.mipLodBias = 0.0f;
 
 		if (vkCreateSampler(device.device(), &samplerInfo, nullptr, &_textureSampler) != VK_SUCCESS) {
 			throw std::runtime_error("Failed to create texture sampler");
@@ -540,7 +540,15 @@ namespace va {
 		return format == VK_FORMAT_D32_SFLOAT_S8_UINT || format == VK_FORMAT_D24_UNORM_S8_UINT;
 	}
 
-	void vaGraphicsPipeline::generateMipmaps(VkImage image, int32_t texWidth, int32_t texHeight, uint32_t mipLevels) {
+	void vaGraphicsPipeline::generateMipmaps(VkImage image, VkFormat imageFormat, int32_t texWidth, int32_t texHeight, uint32_t mipLevels) {
+		// check if image format supports linear blitting
+		VkFormatProperties formatProperties;
+		vkGetPhysicalDeviceFormatProperties(device.physicalDevice(), imageFormat, &formatProperties);
+		
+		if (!(formatProperties.optimalTilingFeatures & VK_FORMAT_FEATURE_SAMPLED_IMAGE_FILTER_LINEAR_BIT)) {
+			throw std::runtime_error("Texture image format does not support lineair blitting");
+		}
+
 		VkCommandBuffer commandBuffer = device.beginSingleTimeCommands();
 
 		VkImageMemoryBarrier barrier{};
