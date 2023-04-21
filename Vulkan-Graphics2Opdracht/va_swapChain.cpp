@@ -82,7 +82,7 @@ namespace va {
 		_swapChainImageViews.resize(_swapChainImages.size());
 
 		for (size_t i = 0; i < _swapChainImages.size(); i++) {
-			_swapChainImageViews[i] = graphicsPipeline.createImageView(_swapChainImages[i], _swapChainImageFormat, VK_IMAGE_ASPECT_COLOR_BIT);
+			_swapChainImageViews[i] = graphicsPipeline.createImageView(_swapChainImages[i], _swapChainImageFormat, VK_IMAGE_ASPECT_COLOR_BIT, 1);
 		}
 	}
 
