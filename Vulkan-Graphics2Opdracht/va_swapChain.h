@@ -8,10 +8,11 @@
 
 namespace va {
 	class vaGraphicsPipeline;
+	class vaModel;
 
 	class vaSwapChain {
 	public:
-		vaSwapChain(vaBaseDevice &deviceRef, vaWindow &windowRef, vaGraphicsPipeline &graphicsPipelineRef);
+		vaSwapChain(vaBaseDevice &deviceRef, vaWindow &windowRef, vaGraphicsPipeline &graphicsPipelineRef, vaModel &modelRef);
 
 		void createSwapChain();
 		void recreateSwapChain();
@@ -34,6 +35,7 @@ namespace va {
 		vaBaseDevice &device;
 		vaWindow &window;
 		vaGraphicsPipeline &graphicsPipeline;
+		vaModel &model;
 
 		VkSwapchainKHR _swapChain;
 		std::vector<VkImage> _swapChainImages;

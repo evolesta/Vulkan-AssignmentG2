@@ -1,9 +1,10 @@
 #include "va_swapChain.h"
 #include "va_graphicsPipeline.h"
+#include "va_model.h"
 
 namespace va {
 
-	vaSwapChain::vaSwapChain(vaBaseDevice& deviceRef, vaWindow& windowRef, vaGraphicsPipeline& graphicsPipelineRef) : device{ deviceRef }, window{ windowRef }, graphicsPipeline{graphicsPipelineRef} {};
+	vaSwapChain::vaSwapChain(vaBaseDevice& deviceRef, vaWindow& windowRef, vaGraphicsPipeline& graphicsPipelineRef, vaModel& modelRef) : device{ deviceRef }, window{ windowRef }, graphicsPipeline{ graphicsPipelineRef }, model{ modelRef } {};
 
 	void vaSwapChain::cleanup() {
 		cleanupSwapChain();
@@ -256,10 +257,10 @@ namespace va {
 		VkDeviceSize offsets[] = { 0 };
 		vkCmdBindVertexBuffers(commandBuffer, 0, 1, vertexBuffers, offsets);
 
-		vkCmdBindIndexBuffer(commandBuffer, graphicsPipeline.indexBuffer(), 0, VK_INDEX_TYPE_UINT16);
+		vkCmdBindIndexBuffer(commandBuffer, graphicsPipeline.indexBuffer(), 0, VK_INDEX_TYPE_UINT32);
 
 		vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, graphicsPipeline.pipelineLayout(), 0, 1, &graphicsPipeline.descriptorSet(device.currentFrame()), 0, nullptr);
-		vkCmdDrawIndexed(commandBuffer, static_cast<uint32_t>(graphicsPipeline.indicesSize()), 1, 0, 0, 0);
+		vkCmdDrawIndexed(commandBuffer, static_cast<uint32_t>(model.indicesSize()), 1, 0, 0, 0);
 
 		vkCmdEndRenderPass(commandBuffer);
 

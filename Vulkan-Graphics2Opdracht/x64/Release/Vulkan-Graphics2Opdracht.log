@@ -1,0 +1,22 @@
+﻿  Main.cpp
+C:\repos\Graphics2-Vulkan\Vulkan-Graphics2Opdracht\Vulkan-Graphics2Opdracht\va_model.h(63,27): warning C4267: 'return': conversion from 'size_t' to 'uint32_t', possible loss of data
+C:\repos\Graphics2-Vulkan\Vulkan-Graphics2Opdracht\Vulkan-Graphics2Opdracht\va_model.h(64,26): warning C4267: 'return': conversion from 'size_t' to 'uint32_t', possible loss of data
+  va_graphicsPipeline.cpp
+C:\repos\Graphics2-Vulkan\Vulkan-Graphics2Opdracht\Vulkan-Graphics2Opdracht\va_model.h(63,27): warning C4267: 'return': conversion from 'size_t' to 'uint32_t', possible loss of data
+C:\repos\Graphics2-Vulkan\Vulkan-Graphics2Opdracht\Vulkan-Graphics2Opdracht\va_model.h(64,26): warning C4267: 'return': conversion from 'size_t' to 'uint32_t', possible loss of data
+  va_mainApp.cpp
+C:\repos\Graphics2-Vulkan\Vulkan-Graphics2Opdracht\Vulkan-Graphics2Opdracht\va_model.h(63,27): warning C4267: 'return': conversion from 'size_t' to 'uint32_t', possible loss of data
+C:\repos\Graphics2-Vulkan\Vulkan-Graphics2Opdracht\Vulkan-Graphics2Opdracht\va_model.h(64,26): warning C4267: 'return': conversion from 'size_t' to 'uint32_t', possible loss of data
+  va_model.cpp
+  GLM: GLM_GTX_hash extension included
+C:\repos\Graphics2-Vulkan\Vulkan-Graphics2Opdracht\Vulkan-Graphics2Opdracht\va_model.h(63,27): warning C4267: 'return': conversion from 'size_t' to 'uint32_t', possible loss of data
+C:\repos\Graphics2-Vulkan\Vulkan-Graphics2Opdracht\Vulkan-Graphics2Opdracht\va_model.h(64,26): warning C4267: 'return': conversion from 'size_t' to 'uint32_t', possible loss of data
+  va_swapChain.cpp
+C:\repos\Graphics2-Vulkan\Vulkan-Graphics2Opdracht\Vulkan-Graphics2Opdracht\va_model.h(63,27): warning C4267: 'return': conversion from 'size_t' to 'uint32_t', possible loss of data
+C:\repos\Graphics2-Vulkan\Vulkan-Graphics2Opdracht\Vulkan-Graphics2Opdracht\va_model.h(64,26): warning C4267: 'return': conversion from 'size_t' to 'uint32_t', possible loss of data
+  Generating code
+  176 of 3267 functions ( 5.4%) were compiled, the rest were copied from previous compilation.
+    154 functions were new in current compilation
+    255 functions had inline decision re-evaluated but remain unchanged
+  Finished generating code
+  Vulkan-Graphics2Opdracht.vcxproj -> C:\repos\Graphics2-Vulkan\Vulkan-Graphics2Opdracht\x64\Release\Vulkan-Graphics2Opdracht.exe

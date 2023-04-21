@@ -2,10 +2,11 @@
 
 #include "va_graphicsPipeline.h"
 #include "va_swapChain.h"
+#include "va_model.h"
 
 namespace va {
 
-	vaGraphicsPipeline::vaGraphicsPipeline(vaBaseDevice& deviceRef, vaSwapChain& swapchainRef) : device{ deviceRef }, swapchain{ swapchainRef } {};
+	vaGraphicsPipeline::vaGraphicsPipeline(vaBaseDevice& deviceRef, vaSwapChain& swapchainRef, vaModel& modelRef) : device{ deviceRef }, swapchain{ swapchainRef }, model{ modelRef } {};
 
 	void vaGraphicsPipeline::cleanup() {
 		vkDestroyImageView(device.device(), _depthImageView, nullptr);
@@ -61,8 +62,8 @@ namespace va {
 		VkPipelineVertexInputStateCreateInfo vertexInputInfo{};
 		vertexInputInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
 
-		auto bindingDescription = Vertex::getBindingDescription();
-		auto attributeDescriptions = Vertex::getAttributeDescriptions();
+		auto bindingDescription = vaModel::Vertex::getBindingDescription();
+		auto attributeDescriptions = vaModel::Vertex::getAttributeDescriptions();
 
 		vertexInputInfo.vertexBindingDescriptionCount = 1;
 		vertexInputInfo.vertexAttributeDescriptionCount = static_cast<uint32_t>(attributeDescriptions.size());
@@ -156,7 +157,7 @@ namespace va {
 	}
 
 	void vaGraphicsPipeline::createVertexBuffer() {
-		VkDeviceSize bufferSize = sizeof(vertices[0]) * vertices.size();
+		VkDeviceSize bufferSize = sizeof(model.vertices()[0]) * model.vertices().size();
 
 		VkBuffer stagingBuffer;
 		VkDeviceMemory stagingBufferMemory;
@@ -164,7 +165,7 @@ namespace va {
 
 		void* data;
 		vkMapMemory(device.device(), stagingBufferMemory, 0, bufferSize, 0, &data);
-		memcpy(data, vertices.data(), (size_t) bufferSize);
+		memcpy(data, model.vertices().data(), (size_t)bufferSize);
 		vkUnmapMemory(device.device(), stagingBufferMemory);
 
 		createBuffer(bufferSize, VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_VERTEX_BUFFER_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, _vertexBuffer, _vertexBufferMemory);
@@ -176,7 +177,7 @@ namespace va {
 	}
 
 	void vaGraphicsPipeline::createIndexBuffer() {
-		VkDeviceSize bufferSize = sizeof(indices[0]) * indices.size();
+		VkDeviceSize bufferSize = sizeof(model.indices()[0]) * model.indices().size();
 
 		VkBuffer stagingBuffer;
 		VkDeviceMemory stagingBufferMemory;
@@ -184,7 +185,7 @@ namespace va {
 
 		void* data;
 		vkMapMemory(device.device(), stagingBufferMemory, 0, bufferSize, 0, &data);
-		memcpy(data, indices.data(), (size_t)bufferSize);
+		memcpy(data, model.indices().data(), (size_t)bufferSize);
 		vkUnmapMemory(device.device(), stagingBufferMemory);
 
 		createBuffer(bufferSize, VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_INDEX_BUFFER_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, _indexBuffer, _indexBufferMemory);
@@ -301,7 +302,7 @@ namespace va {
 
 	void vaGraphicsPipeline::createTextureImage() {
 		int texWidth, texHeight, texChannels;
-		stbi_uc* pixels = stbi_load("./textures/texture1.png", &texWidth, &texHeight, &texChannels, STBI_rgb_alpha);
+		stbi_uc* pixels = stbi_load(model.TEXTURE_PATH().c_str(), &texWidth, &texHeight, &texChannels, STBI_rgb_alpha);
 		VkDeviceSize imageSize = texWidth * texHeight * 4;
 
 		if (!pixels) {

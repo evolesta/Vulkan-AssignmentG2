@@ -27,6 +27,7 @@ namespace va {
 		vaGraphicsPipeline.createTextureImage();
 		vaGraphicsPipeline.createTextureImageView();
 		vaGraphicsPipeline.createTextureSampler();
+		vaModel.loadModel();
 		vaGraphicsPipeline.createVertexBuffer();
 		vaGraphicsPipeline.createIndexBuffer();
 		vaGraphicsPipeline.createUniformBuffers();

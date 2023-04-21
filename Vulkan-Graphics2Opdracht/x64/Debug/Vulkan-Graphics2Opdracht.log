@@ -1,8 +1,26 @@
-﻿  va_graphicsPipeline.cpp
-C:\repos\Graphics2-Vulkan\Vulkan-Graphics2Opdracht\Vulkan-Graphics2Opdracht\va_graphicsPipeline.h(42,27): warning C4267: 'return': conversion from 'size_t' to 'uint32_t', possible loss of data
-C:\repos\Graphics2-Vulkan\Vulkan-Graphics2Opdracht\Vulkan-Graphics2Opdracht\va_graphicsPipeline.h(43,26): warning C4267: 'return': conversion from 'size_t' to 'uint32_t', possible loss of data
+﻿  Main.cpp
+C:\repos\Graphics2-Vulkan\Vulkan-Graphics2Opdracht\Vulkan-Graphics2Opdracht\va_model.h(57,27): warning C4267: 'return': conversion from 'size_t' to 'uint32_t', possible loss of data
+C:\repos\Graphics2-Vulkan\Vulkan-Graphics2Opdracht\Vulkan-Graphics2Opdracht\va_model.h(58,26): warning C4267: 'return': conversion from 'size_t' to 'uint32_t', possible loss of data
+  va_baseDevice.cpp
+C:\repos\Graphics2-Vulkan\Vulkan-Graphics2Opdracht\Vulkan-Graphics2Opdracht\va_baseDevice.cpp(347,28): warning C4101: 'supportedFeatures': unreferenced local variable
+  va_graphicsPipeline.cpp
+C:\repos\Graphics2-Vulkan\Vulkan-Graphics2Opdracht\Vulkan-Graphics2Opdracht\va_model.h(57,27): warning C4267: 'return': conversion from 'size_t' to 'uint32_t', possible loss of data
+C:\repos\Graphics2-Vulkan\Vulkan-Graphics2Opdracht\Vulkan-Graphics2Opdracht\va_model.h(58,26): warning C4267: 'return': conversion from 'size_t' to 'uint32_t', possible loss of data
+  va_mainApp.cpp
+C:\repos\Graphics2-Vulkan\Vulkan-Graphics2Opdracht\Vulkan-Graphics2Opdracht\va_model.h(57,27): warning C4267: 'return': conversion from 'size_t' to 'uint32_t', possible loss of data
+C:\repos\Graphics2-Vulkan\Vulkan-Graphics2Opdracht\Vulkan-Graphics2Opdracht\va_model.h(58,26): warning C4267: 'return': conversion from 'size_t' to 'uint32_t', possible loss of data
+  va_model.cpp
+C:\repos\Graphics2-Vulkan\Vulkan-Graphics2Opdracht\Vulkan-Graphics2Opdracht\va_model.h(57,27): warning C4267: 'return': conversion from 'size_t' to 'uint32_t', possible loss of data
+C:\repos\Graphics2-Vulkan\Vulkan-Graphics2Opdracht\Vulkan-Graphics2Opdracht\va_model.h(58,26): warning C4267: 'return': conversion from 'size_t' to 'uint32_t', possible loss of data
+C:\repos\Graphics2-Vulkan\Vulkan-Graphics2Opdracht\Vulkan-Graphics2Opdracht\va_model.cpp(25,39): warning C4267: 'argument': conversion from 'size_t' to '_Ty', possible loss of data
+          with
+          [
+              _Ty=unsigned int
+          ]
   va_swapChain.cpp
-C:\repos\Graphics2-Vulkan\Vulkan-Graphics2Opdracht\Vulkan-Graphics2Opdracht\va_graphicsPipeline.h(42,27): warning C4267: 'return': conversion from 'size_t' to 'uint32_t', possible loss of data
-C:\repos\Graphics2-Vulkan\Vulkan-Graphics2Opdracht\Vulkan-Graphics2Opdracht\va_graphicsPipeline.h(43,26): warning C4267: 'return': conversion from 'size_t' to 'uint32_t', possible loss of data
+C:\repos\Graphics2-Vulkan\Vulkan-Graphics2Opdracht\Vulkan-Graphics2Opdracht\va_model.h(57,27): warning C4267: 'return': conversion from 'size_t' to 'uint32_t', possible loss of data
+C:\repos\Graphics2-Vulkan\Vulkan-Graphics2Opdracht\Vulkan-Graphics2Opdracht\va_model.h(58,26): warning C4267: 'return': conversion from 'size_t' to 'uint32_t', possible loss of data
+  va_window.cpp
   Generating Code...
+LINK : warning LNK4098: defaultlib 'MSVCRT' conflicts with use of other libs; use /NODEFAULTLIB:library
   Vulkan-Graphics2Opdracht.vcxproj -> C:\repos\Graphics2-Vulkan\Vulkan-Graphics2Opdracht\x64\Debug\Vulkan-Graphics2Opdracht.exe
