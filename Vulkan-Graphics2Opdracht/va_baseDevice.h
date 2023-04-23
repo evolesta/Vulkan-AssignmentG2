@@ -43,6 +43,7 @@ namespace va {
 		VkCommandPool commandPool() { return _commandPool; }
 		int MAX_FRAMES_IN_FLIGHT() { return _MAX_FRAMES_IN_FLIGHT; }
 		uint32_t currentFrame() { return _currentFrame; }
+		VkSampleCountFlagBits msaaSamples() { return _msaaSamples; }
 
 		void createInstance();
 		void setupDebugMessenger();
@@ -81,6 +82,7 @@ namespace va {
 		std::vector<VkSemaphore> _renderFinishedSemaphores;
 		std::vector<VkFence> _inFlightFences;
 		uint32_t _currentFrame = 0;
+		VkSampleCountFlagBits _msaaSamples = VK_SAMPLE_COUNT_1_BIT;
 
 		vaWindow &_window;
 		vaSwapChain &swapChain;
@@ -101,5 +103,6 @@ namespace va {
 		bool checkDeviceExtensionSupport(VkPhysicalDevice device);
 		QueueFamilyIndices findQueueFamilies(VkPhysicalDevice device);
 		SwapChainSupportDetails querySwapChainSupport(VkPhysicalDevice device);
+		VkSampleCountFlagBits getMaxUsableSampleCount();
 	};
 }

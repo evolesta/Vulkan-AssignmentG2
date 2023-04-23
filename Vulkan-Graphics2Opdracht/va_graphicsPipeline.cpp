@@ -9,6 +9,10 @@ namespace va {
 	vaGraphicsPipeline::vaGraphicsPipeline(vaBaseDevice& deviceRef, vaSwapChain& swapchainRef, vaModel& modelRef) : device{ deviceRef }, swapchain{ swapchainRef }, model{ modelRef } {};
 
 	void vaGraphicsPipeline::cleanup() {
+		vkDestroyImageView(device.device(), _colorImageView, nullptr);
+		vkDestroyImage(device.device(), _colorImage, nullptr);
+		vkFreeMemory(device.device(), _colorImageMemory, nullptr);
+
 		vkDestroyImageView(device.device(), _depthImageView, nullptr);
 		vkDestroyImage(device.device(), _depthImage, nullptr);
 		vkFreeMemory(device.device(), _depthImageMemory, nullptr);
@@ -92,8 +96,9 @@ namespace va {
 
 		VkPipelineMultisampleStateCreateInfo multisampling{};
 		multisampling.sType = VK_STRUCTURE_TYPE_PIPELINE_MULTISAMPLE_STATE_CREATE_INFO;
-		multisampling.sampleShadingEnable = VK_FALSE;
-		multisampling.rasterizationSamples = VK_SAMPLE_COUNT_1_BIT;
+		multisampling.sampleShadingEnable = VK_TRUE;
+		multisampling.minSampleShading = .2f;
+		multisampling.rasterizationSamples = device.msaaSamples();
 
 		VkPipelineDepthStencilStateCreateInfo depthStencil{};
 		depthStencil.sType = VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO;
@@ -321,7 +326,7 @@ namespace va {
 
 		stbi_image_free(pixels);
 
-		createImage(texWidth, texHeight, _mipLevels, VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_USAGE_TRANSFER_SRC_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, _textureImage, _textureImageMemory);
+		createImage(texWidth, texHeight, _mipLevels, VK_SAMPLE_COUNT_1_BIT, VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_USAGE_TRANSFER_SRC_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, _textureImage, _textureImageMemory);
 		
 		device.transitionImageLayout(_textureImage, VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, _mipLevels);
 		device.copyBufferToImage(stagingBuffer, _textureImage, static_cast<uint32_t>(texWidth), static_cast<uint32_t>(texHeight));
@@ -367,10 +372,17 @@ namespace va {
 	void vaGraphicsPipeline::createDepthResources() {
 		VkFormat depthFormat = findDepthFormat();
 
-		createImage(swapchain.swapchainExtent().width, swapchain.swapchainExtent().height, 1, depthFormat,
+		createImage(swapchain.swapchainExtent().width, swapchain.swapchainExtent().height, 1, device.msaaSamples(), depthFormat,
 			VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT,
 			VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, _depthImage, _depthImageMemory);
 		_depthImageView = createImageView(_depthImage, depthFormat, VK_IMAGE_ASPECT_DEPTH_BIT, 1);
+	}
+
+	void vaGraphicsPipeline::createColorResources() {
+		VkFormat colorFormat = swapchain.swapChainImageFormat();
+
+		createImage(swapchain.swapchainExtent().width, swapchain.swapchainExtent().height, 1, device.msaaSamples(), colorFormat, VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_USAGE_TRANSIENT_ATTACHMENT_BIT | VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, _colorImage, _colorImageMemory);
+		_colorImageView = createImageView(_colorImage, colorFormat, VK_IMAGE_ASPECT_COLOR_BIT, 1);
 	}
 
 	// Helper functions
@@ -460,7 +472,7 @@ namespace va {
 		memcpy(_uniformBuffersMapped[currentImage], &ubo, sizeof(ubo));
 	}
 
-	void vaGraphicsPipeline::createImage(uint32_t width, uint32_t height, uint32_t mipLevels, VkFormat format, VkImageTiling tiling, VkImageUsageFlags usage, VkMemoryPropertyFlags properties, VkImage& image, VkDeviceMemory& imageMemory) {
+	void vaGraphicsPipeline::createImage(uint32_t width, uint32_t height, uint32_t mipLevels, VkSampleCountFlagBits numSamples, VkFormat format, VkImageTiling tiling, VkImageUsageFlags usage, VkMemoryPropertyFlags properties, VkImage& image, VkDeviceMemory& imageMemory) {
 		VkImageCreateInfo imageInfo{};
 		imageInfo.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
 		imageInfo.imageType = VK_IMAGE_TYPE_2D;
@@ -473,7 +485,7 @@ namespace va {
 		imageInfo.tiling = tiling;
 		imageInfo.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
 		imageInfo.usage = usage;
-		imageInfo.samples = VK_SAMPLE_COUNT_1_BIT;
+		imageInfo.samples = numSamples;
 		imageInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
 
 		if (vkCreateImage(device.device(), &imageInfo, nullptr, &image) != VK_SUCCESS) {

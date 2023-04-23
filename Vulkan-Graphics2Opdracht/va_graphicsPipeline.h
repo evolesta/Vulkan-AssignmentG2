@@ -35,6 +35,7 @@ namespace va {
 		void createTextureImageView();
 		void createTextureSampler();
 		void createDepthResources();
+		void createColorResources();
 		void cleanup();
 
 		// Getters
@@ -44,6 +45,7 @@ namespace va {
 		VkPipelineLayout pipelineLayout() { return _pipelineLayout; }
 		VkDescriptorSet& descriptorSet(uint32_t index) { return _descriptorSets[index]; }
 		VkImageView depthImageView() { return _depthImageView; }
+		VkImageView colorImageView() { return _colorImageView; }
 
 		// Helper functions
 		void updateUniformBuffer(uint32_t currentImage);
@@ -72,6 +74,9 @@ namespace va {
 		VkImage _depthImage;
 		VkDeviceMemory _depthImageMemory;
 		VkImageView _depthImageView;
+		VkImage _colorImage;
+		VkDeviceMemory _colorImageMemory;
+		VkImageView _colorImageView;
 
 		std::vector<VkBuffer> _uniformBuffers;
 		std::vector<VkDeviceMemory> _uniformBuffersMemory;
@@ -82,7 +87,7 @@ namespace va {
 		VkShaderModule createShaderModule(const std::vector<char>& code);
 		uint32_t findMemoryType(uint32_t typeFilter, VkMemoryPropertyFlags properties);
 		void createBuffer(VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties, VkBuffer& buffer, VkDeviceMemory& bufferMemory);
-		void createImage(uint32_t width, uint32_t height, uint32_t mipLevels, VkFormat format, VkImageTiling tiling, VkImageUsageFlags usage, VkMemoryPropertyFlags properties, VkImage& image, VkDeviceMemory& imageMemory);
+		void createImage(uint32_t width, uint32_t height, uint32_t mipLevels, VkSampleCountFlagBits numSamples, VkFormat format, VkImageTiling tiling, VkImageUsageFlags usage, VkMemoryPropertyFlags properties, VkImage& image, VkDeviceMemory& imageMemory);
 		VkFormat findSupportedFormat(const std::vector<VkFormat>& candidates, VkImageTiling tiling, VkFormatFeatureFlags features);
 		bool hasStencilComponent(VkFormat format);
 		void generateMipmaps(VkImage image, VkFormat imageFormat, int32_t texWidth, int32_t texHeight, uint32_t mipLevels);
