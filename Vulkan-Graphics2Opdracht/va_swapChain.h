@@ -30,6 +30,7 @@ namespace va {
 		VkSwapchainKHR swapChain() { return _swapChain; }
 		VkExtent2D swapchainExtent() { return _swapChainExtent; }
 		VkFormat swapChainImageFormat() { return _swapChainImageFormat; }
+		uint32_t swapChainImagesSize() { return _swapChainImages.size(); }
 
 	private:
 		// Variables

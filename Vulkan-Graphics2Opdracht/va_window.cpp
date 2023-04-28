@@ -1,7 +1,7 @@
 #include "va_window.h"
 
 namespace va {
-	vaWindow::vaWindow(int w, int h, std::string title) : width{ w }, height{ h }, windowTitle{ title } {
+	vaWindow::vaWindow(int w, int h, std::string title, vaCamera& cameraRef) : width{ w }, height{ h }, windowTitle{ title }, camera{ cameraRef } {
 		initWindow();
 	}
 
@@ -30,6 +30,30 @@ namespace va {
 		window = glfwCreateWindow(width, height, windowTitle.c_str(), nullptr, nullptr);
 		glfwSetWindowUserPointer(window, this);
 		glfwSetFramebufferSizeCallback(window, framebufferResizeCallback);
+	}
+
+	void vaWindow::handleInput() {
+		// W - Going forward
+		if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
+			std::cout << "Pressed the W key" << std::endl;
+		}
+
+		// S - Going backward
+		if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) {
+			std::cout << "Pressed the S key" << std::endl;
+		}
+
+		// A - going left
+		if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
+			std::cout << "Pressed the A key" << std::endl;
+		}
+
+		// D - going right
+		if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
+			std::cout << "Pressed the D key" << std::endl;
+		}
+
+		
 	}
 
 	// Helper functions

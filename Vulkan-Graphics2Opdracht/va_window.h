@@ -8,10 +8,11 @@
 
 namespace va {
 
+	class vaCamera;
 	class vaWindow {
 
 	public:
-		vaWindow(int w, int h, std::string title);
+		vaWindow(int w, int h, std::string title, vaCamera &cameraRef);
 		
 		// Getters
 		bool shouldClose() { return glfwWindowShouldClose(window); }
@@ -19,6 +20,9 @@ namespace va {
 		bool getFramebufferResized() { return framebufferResized; }
 		void resetFramebufferResized() { framebufferResized = false; }
 
+		// Main functions
+		void initWindow();
+		void handleInput();
 		void cleanup();
 
 		// Helper functions
@@ -27,12 +31,12 @@ namespace va {
 		void minimization();
 
 	private:
-		void initWindow();
-
 		const int width;
 		const int height;
 		std::string windowTitle;
 		GLFWwindow *window;
 		bool framebufferResized = false;
+
+		vaCamera &camera;
 	};
 }

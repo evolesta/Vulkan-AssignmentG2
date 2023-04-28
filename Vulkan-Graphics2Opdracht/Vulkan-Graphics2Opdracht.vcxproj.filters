@@ -36,6 +36,9 @@
     <ClCompile Include="va_model.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="va_camera.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="va_window.h">
@@ -55,6 +58,9 @@
     </ClInclude>
     <ClInclude Include="va_model.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="va_camera.h">
+      <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

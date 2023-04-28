@@ -71,6 +71,8 @@ namespace va {
 
 		VkInstance _instance;
 		VkDebugUtilsMessengerEXT _debugMessenger;
+
+
 		VkPhysicalDevice _physicalDevice;
 		VkDevice _device;
 		VkQueue _graphicsQueue;

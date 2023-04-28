@@ -42,6 +42,7 @@ namespace va {
 		// Main loop to keep the GLFW window open
 		while (!vaWindow.shouldClose()) {
 			glfwPollEvents();
+			//vaWindow.handleInput();
 			vaBaseDevice.drawFrame();
 		}
 

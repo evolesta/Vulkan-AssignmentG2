@@ -13,10 +13,11 @@
 namespace va {
 	class vaSwapChain;
 	class vaModel;
+	class vaCamera;
 
 	class vaGraphicsPipeline {
 	public:
-		vaGraphicsPipeline(vaBaseDevice &deviceRef, vaSwapChain &swapchainRef, vaModel &modelRef);
+		vaGraphicsPipeline(vaBaseDevice &deviceRef, vaSwapChain &swapchainRef, vaModel &modelRef, vaCamera &cameraRef);
 
 		struct UniformBufferObject {
 			alignas(16) glm::mat4 model;
@@ -46,17 +47,20 @@ namespace va {
 		VkDescriptorSet& descriptorSet(uint32_t index) { return _descriptorSets[index]; }
 		VkImageView depthImageView() { return _depthImageView; }
 		VkImageView colorImageView() { return _colorImageView; }
+		VkDeviceSize UBsize() { return sizeof(UniformBufferObject); }
 
 		// Helper functions
 		void updateUniformBuffer(uint32_t currentImage);
 		VkImageView createImageView(VkImage image, VkFormat format, VkImageAspectFlags aspectFlags, uint32_t mipLevels);
 		VkFormat findDepthFormat();
+		void createBuffer(VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties, VkBuffer& buffer, VkDeviceMemory& bufferMemory);
 
 	private:
 		// Variables
 		vaBaseDevice &device;
 		vaSwapChain &swapchain;
 		vaModel &model;
+		vaCamera &camera;
 		VkDescriptorSetLayout _descriptorSetLayout;
 		VkPipelineLayout _pipelineLayout;
 		VkPipeline _graphicsPipeline;
@@ -86,7 +90,6 @@ namespace va {
 		static std::vector<char> readFile(const std::string& filename);
 		VkShaderModule createShaderModule(const std::vector<char>& code);
 		uint32_t findMemoryType(uint32_t typeFilter, VkMemoryPropertyFlags properties);
-		void createBuffer(VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties, VkBuffer& buffer, VkDeviceMemory& bufferMemory);
 		void createImage(uint32_t width, uint32_t height, uint32_t mipLevels, VkSampleCountFlagBits numSamples, VkFormat format, VkImageTiling tiling, VkImageUsageFlags usage, VkMemoryPropertyFlags properties, VkImage& image, VkDeviceMemory& imageMemory);
 		VkFormat findSupportedFormat(const std::vector<VkFormat>& candidates, VkImageTiling tiling, VkFormatFeatureFlags features);
 		bool hasStencilComponent(VkFormat format);

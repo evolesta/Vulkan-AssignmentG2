@@ -3,10 +3,11 @@
 #include "va_graphicsPipeline.h"
 #include "va_swapChain.h"
 #include "va_model.h"
+#include "va_camera.h"
 
 namespace va {
 
-	vaGraphicsPipeline::vaGraphicsPipeline(vaBaseDevice& deviceRef, vaSwapChain& swapchainRef, vaModel& modelRef) : device{ deviceRef }, swapchain{ swapchainRef }, model{ modelRef } {};
+	vaGraphicsPipeline::vaGraphicsPipeline(vaBaseDevice& deviceRef, vaSwapChain& swapchainRef, vaModel& modelRef, vaCamera& cameraRef) : device{ deviceRef }, swapchain{ swapchainRef }, model{ modelRef }, camera{ cameraRef } {};
 
 	void vaGraphicsPipeline::cleanup() {
 		vkDestroyImageView(device.device(), _colorImageView, nullptr);
@@ -237,7 +238,10 @@ namespace va {
 		for (size_t i = 0; i < device.MAX_FRAMES_IN_FLIGHT(); i++) {
 			createBuffer(bufferSize, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, _uniformBuffers[i], _uniformBuffersMemory[i]);
 
-			vkMapMemory(device.device(), _uniformBuffersMemory[i], 0, bufferSize, 0, &_uniformBuffersMapped[i]);
+			camera.updateView(glm::vec3(2.0f, 2.0f, 2.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+			camera.updateProjection(swapchain.swapchainExtent().width / (float)swapchain.swapchainExtent().height);
+
+			updateUniformBuffer(i);
 		}
 	}
 
@@ -464,12 +468,16 @@ namespace va {
 		float time = std::chrono::duration<float, std::chrono::seconds::period>(currentTime - startTime).count();
 
 		UniformBufferObject ubo{};
-		ubo.model = glm::rotate(glm::mat4(1.0f), time * glm::radians(90.f), glm::vec3(0.0f, 0.0f, 1.0f));
-		ubo.view = glm::lookAt(glm::vec3(2.0f, 2.0f, 2.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+		ubo.model = glm::mat4(1.0f);
+		ubo.view = camera.getView();
 		ubo.proj = glm::perspective(glm::radians(45.0f), swapchain.swapchainExtent().width / (float)swapchain.swapchainExtent().height, 0.1f, 10.0f);
 		ubo.proj[1][1] *= -1;
 
-		memcpy(_uniformBuffersMapped[currentImage], &ubo, sizeof(ubo));
+		//memcpy(_uniformBuffersMapped[currentImage], &ubo, sizeof(ubo));
+		void* data;
+		vkMapMemory(device.device(), _uniformBuffersMemory[currentImage], 0, sizeof(ubo), 0, &data);
+		memcpy(data, &ubo, sizeof(ubo));
+		vkUnmapMemory(device.device(), _uniformBuffersMemory[currentImage]);
 	}
 
 	void vaGraphicsPipeline::createImage(uint32_t width, uint32_t height, uint32_t mipLevels, VkSampleCountFlagBits numSamples, VkFormat format, VkImageTiling tiling, VkImageUsageFlags usage, VkMemoryPropertyFlags properties, VkImage& image, VkDeviceMemory& imageMemory) {
